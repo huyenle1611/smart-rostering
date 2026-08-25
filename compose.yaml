@@ -1,0 +1,29 @@
+services:
+
+  # ==========================================
+  # SPRING BOOT APPLICATION
+  # ==========================================
+  shift-management:
+
+    build:
+      context: .
+      dockerfile: Dockerfile
+
+    container_name: shift-management-app
+
+    ports:
+      - "8080:8080"
+
+    # Persist H2 database files outside the container
+    volumes:
+      - h2-data:/app/data
+
+    restart: unless-stopped
+
+
+# ==========================================
+# PERSISTENT VOLUMES
+# ==========================================
+volumes:
+
+  h2-data:
