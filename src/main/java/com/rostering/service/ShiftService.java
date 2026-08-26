@@ -9,28 +9,24 @@ import com.rostering.model.entity.Shift;
 import com.rostering.repository.*;
 
 @Service
-public class ShiftService implements IShiftService{
+public class ShiftService{
 	
 	@Autowired
 	private ShiftRepository shiftRepository;
 	
-	@Override
 	public List<Shift> getAllShifts() {
 		return shiftRepository.findAll();
 	}
 	
-	@Override
 	public Shift getShiftById(Integer id) {
 		return shiftRepository.findById(id)
 				.orElse(null);
 	}
 	
-	@Override
 	public Shift createShift(Shift shift) {
 		return shiftRepository.save(shift);
 	}
 	
-	@Override
 	public void deleteShift(Integer id) {
 		shiftRepository.deleteById(id);
 		
