@@ -5,7 +5,7 @@ spring:
   datasource:
     url: jdbc:mysql://localhost:3306/rostering
     username: root
-    password: Khanh1995!
+    password: ${DB_PASSWORD}
 
   jpa:
     hibernate:
