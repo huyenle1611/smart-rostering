@@ -1,9 +1,9 @@
 package com.rostering.controller;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Optional;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.rostering.mapper.ShiftMapper;
@@ -36,15 +37,10 @@ public class ShiftController {
     }
 	
 	@GetMapping
-	public List<ShiftResponseDTO> getShifts() {
-		List<Shift> shifts = shiftRepository.findAll();
-        List<ShiftResponseDTO> shiftDTOs = new ArrayList<>();
-
-        for(Shift shift : shifts){
-            ShiftResponseDTO shiftDTO = shiftMapper.toResponseDTO(shift);
-            shiftDTOs.add(shiftDTO);
-        }
-        return shiftDTOs;
+	public Page<Shift> getShifts(@RequestParam(required = false, defaultValue = "1") int pageNo, 
+								 @RequestParam(required = false, defaultValue = "5") int pageSize) {
+		
+		return shiftRepository.findAll(PageRequest.of(pageNo-1, pageSize));
 	}
 	
 	@GetMapping("/{id}")
@@ -53,23 +49,23 @@ public class ShiftController {
         if (shiftWrapper.isPresent()) {
             Shift shiftObj = shiftWrapper.get();
             ShiftResponseDTO dto = shiftMapper.toResponseDTO(shiftObj);
-            //200 success
+
             return ResponseEntity.ok(dto);
         } else {
-            //404 not found
+
             return ResponseEntity.notFound().build();
         }
     }
 	
 	@PostMapping
     public ResponseEntity<ShiftResponseDTO> createEmployee(@Valid @RequestBody ShiftRequestDTO request){
-        // Map requestDTO > entity
+
         Shift shift = shiftMapper.toEntity(request);
-        // Save shift to database
+
         Shift savedShift = shiftRepository.save(shift);
-        // Map savedShift to shiftResponseDTO
+
         ShiftResponseDTO shiftDTO = shiftMapper.toResponseDTO(savedShift);
-        // Return http status + dto 
+
         return ResponseEntity.status(HttpStatus.CREATED).body(shiftDTO);
     }
 	
@@ -79,10 +75,10 @@ public class ShiftController {
         if(shiftWrapper.isPresent()){
             Shift shift = shiftWrapper.get();
             shiftRepository.delete(shift);
-            //return 204 no content > delete successfully
+
             return ResponseEntity.noContent().build();
         } else {
-            //404 not found
+
             return ResponseEntity.notFound().build();
         }
     }

@@ -2,12 +2,3 @@ spring:
   application:
     name: rostering
 
-  datasource:
-    url: jdbc:mysql://localhost:3306/rostering
-    username: root
-    password: ${DB_PASSWORD}
-
-  jpa:
-    hibernate:
-      ddl-auto: update
-    show-sql: true
