@@ -6,7 +6,7 @@ services:
     restart: unless-stopped
 
     environment:
-      MYSQL_ROOT_PASSWORD: rootpw
+      MYSQL_ROOT_PASSWORD: ${DB_PASSWORD}
       MYSQL_DATABASE: rostering
 
     ports:
@@ -16,7 +16,7 @@ services:
       - mysql_data:/var/lib/mysql
 
     healthcheck:
-      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-uroot", "-prootpw"]
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-uroot", "-p${DB_PASSWORD}"]
       interval: 10s
       timeout: 5s
       retries: 10
@@ -24,3 +24,5 @@ services:
 
 volumes:
   mysql_data:
+
+	
