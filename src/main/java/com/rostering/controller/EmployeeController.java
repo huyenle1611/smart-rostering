@@ -4,6 +4,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -12,6 +15,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.rostering.mapper.EmpMapper;
@@ -36,15 +40,12 @@ public class EmployeeController {
 
     // get all employees
     @GetMapping
-    public List<EmpResponseDTO> getEmployees() {
-        List<Employee> emps = employeeRepository.findAll();
-        List<EmpResponseDTO> empDTOs = new ArrayList<>();
+    public Page<EmpResponseDTO> getEmployees(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "20") int size) {
 
-        for(Employee emp : emps){
-            EmpResponseDTO empDTO = empMapper.toResponseDTO(emp);
-            empDTOs.add(empDTO);
-        }
-        return empDTOs;
+       Pageable pageable = PageRequest.of(page,size);
+       return employeeRepository.findAllEmpDTOs(pageable);
     }
 
     // get emp by id
@@ -54,37 +55,38 @@ public class EmployeeController {
         if (emp.isPresent()) {
             Employee employee = emp.get();
             EmpResponseDTO dto = empMapper.toResponseDTO(employee);
-            //200 success
+            // 200 success
             return ResponseEntity.ok(dto);
         } else {
-            //404 not found
+            // 404 not found
             return ResponseEntity.notFound().build();
         }
     }
+
     // create new employee
     @PostMapping
-    public ResponseEntity<EmpResponseDTO> createEmployee(@Valid @RequestBody EmpRequestDTO request){
-        //map requestDTO > entity
+    public ResponseEntity<EmpResponseDTO> createEmployee(@Valid @RequestBody EmpRequestDTO request) {
+        // map requestDTO > entity
         Employee emp = empMapper.toEntity(request);
-        //save emp to db
+        // save emp to db
         Employee savedEmp = employeeRepository.save(emp);
-        //map savedEmp to empResponseDTO
+        // map savedEmp to empResponseDTO
         EmpResponseDTO empDTO = empMapper.toResponseDTO(savedEmp);
-        //return http status + dto 
+        // return http status + dto
         return ResponseEntity.status(HttpStatus.CREATED).body(empDTO);
     }
 
     // delete employee
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteEmployee(@PathVariable Integer id){
+    public ResponseEntity<Void> deleteEmployee(@PathVariable Integer id) {
         Optional<Employee> employee = employeeRepository.findById(id);
-        if(employee.isPresent()){
+        if (employee.isPresent()) {
             Employee emp = employee.get();
             employeeRepository.delete(emp);
-            //return 204 no content > delete successfully
+            // return 204 no content > delete successfully
             return ResponseEntity.noContent().build();
         } else {
-            //404 not found
+            // 404 not found
             return ResponseEntity.notFound().build();
         }
     }
