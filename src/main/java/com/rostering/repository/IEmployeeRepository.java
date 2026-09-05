@@ -16,9 +16,7 @@ public interface IEmployeeRepository extends JpaRepository<Employee, Integer> {
             e.firstName,
             e.lastName,
             e.email)
-
             FROM Employee e
-
                 """)
     Page<EmpResponseDTO> findAllEmpDTOs(Pageable pageable);
 }
