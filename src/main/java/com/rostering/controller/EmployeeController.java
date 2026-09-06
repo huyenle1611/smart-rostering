@@ -1,7 +1,5 @@
 package com.rostering.controller;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Optional;
 
 import org.springframework.data.domain.Page;
@@ -43,11 +41,10 @@ public class EmployeeController {
     // get all employees
     @GetMapping
     public Page<EmpResponseDTO> getEmps(
-            @RequestParam(defaultValue = "0") int page,
-            @RequestParam(defaultValue = "20") int size) {
-
-        Pageable pageable = PageRequest.of(page, size);
-        return employeeRepository.findAllEmpDTOs(pageable);
+            @RequestParam(defaultValue = "0") int page) {
+        int size = 30;
+        Pageable pageInput = PageRequest.of(page, size);
+        return employeeRepository.findAllEmpDTOs(pageInput);
     }
 
     // get emp by id
@@ -72,7 +69,7 @@ public class EmployeeController {
         Employee emp = empMapper.toEntity(request);
         // save emp to db
         employeeRepository.save(emp);
-        // http status 
+        // http status
         return ResponseEntity.status(HttpStatus.CREATED).body("Employee created successfully!");
     }
 
@@ -145,7 +142,7 @@ public class EmployeeController {
             if (request.maxWeeklyHours() != null) {
                 emp.setMaxWeeklyHours(request.maxWeeklyHours());
             }
-            //save to db
+            // save to db
             employeeRepository.save(emp);
             return ResponseEntity.ok("Employee updated successfully!");
         } else {
