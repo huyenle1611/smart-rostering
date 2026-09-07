@@ -37,10 +37,9 @@ public class ShiftController {
     }
 	
 	@GetMapping
-	public Page<Shift> getShifts(@RequestParam(required = false, defaultValue = "1") int pageNo, 
-								 @RequestParam(required = false, defaultValue = "5") int pageSize) {
-		
-		return shiftRepository.findAll(PageRequest.of(pageNo-1, pageSize));
+	public Page<Shift> getShifts(@RequestParam(required = false, defaultValue = "0") int pageNo) {
+		int pageSize = 30;
+		return shiftRepository.findAll(PageRequest.of(pageNo, pageSize));
 	}
 	
 	@GetMapping("/{id}")
@@ -58,15 +57,13 @@ public class ShiftController {
     }
 	
 	@PostMapping
-    public ResponseEntity<ShiftResponseDTO> createEmployee(@Valid @RequestBody ShiftRequestDTO request){
+    public ResponseEntity<String> createEmployee(@Valid @RequestBody ShiftRequestDTO request){
 
         Shift shift = shiftMapper.toEntity(request);
 
-        Shift savedShift = shiftRepository.save(shift);
+        shiftRepository.save(shift);
 
-        ShiftResponseDTO shiftDTO = shiftMapper.toResponseDTO(savedShift);
-
-        return ResponseEntity.status(HttpStatus.CREATED).body(shiftDTO);
+        return ResponseEntity.status(HttpStatus.CREATED).body("Shift created successfully");
     }
 	
 	@DeleteMapping("/{id}")
