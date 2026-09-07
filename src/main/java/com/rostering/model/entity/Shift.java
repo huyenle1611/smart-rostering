@@ -1,9 +1,5 @@
 package com.rostering.model.entity;
 
-import java.time.LocalDate;
-
-import java.time.LocalTime;
-
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -31,12 +27,12 @@ public class Shift {
 	private String name;
 	
 	@Column(nullable = false)
-	private LocalDate date;
+	private String date;
 	
 	@Column(nullable = false)
-	private LocalTime startTime;
+	private String startTime;
 	
 	@Column(nullable = false)
-	private LocalTime endTime;
+	private String endTime;
 	
 }	
