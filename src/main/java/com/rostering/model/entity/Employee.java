@@ -35,7 +35,4 @@ public class Employee {
 
     @Column(nullable = false)
     private Integer maxWeeklyHours;
-
-    @Column(nullable = false)
-    private boolean deleted;
 }
