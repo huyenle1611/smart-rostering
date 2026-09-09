@@ -8,8 +8,10 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -76,6 +78,51 @@ public class ShiftController {
             return ResponseEntity.noContent().build();
         } else {
 
+            return ResponseEntity.notFound().build();
+        }
+    }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<String> updateShift(@PathVariable Integer id, @Valid @RequestBody ShiftRequestDTO request) {
+        
+        Optional<Shift> shiftWrapper = shiftRepository.findById(id);
+        if (shiftWrapper.isPresent()) {
+            Shift shift = shiftWrapper.get();
+            
+            shift.setName(request.name());
+            shift.setDate(request.date());
+            shift.setStartTime(request.startTime());
+            shift.setEndTime(request.endTime());
+
+            shiftRepository.save(shift);
+            return ResponseEntity.ok("Shift updated successfully");
+        } else {
+            return ResponseEntity.notFound().build();
+        }
+    }
+
+    @PatchMapping("/{id}")
+    public ResponseEntity<String> patchShift(@PathVariable Integer id, @RequestBody ShiftRequestDTO request) {
+        Optional<Shift> shiftWrapper = shiftRepository.findById(id);
+        if (shiftWrapper.isPresent()) {
+            Shift shift = shiftWrapper.get();
+
+            if (request.name() != null) {
+                shift.setName(request.name());
+            }
+            if (request.date() != null) {
+                shift.setDate(request.date());
+            }
+            if (request.startTime() != null) {
+                shift.setStartTime(request.startTime());
+            }
+            if (request.endTime() != null) {
+                shift.setEndTime(request.endTime());
+            }
+
+            shiftRepository.save(shift);
+            return ResponseEntity.ok("Shift updated successfully");
+        } else {
             return ResponseEntity.notFound().build();
         }
     }
